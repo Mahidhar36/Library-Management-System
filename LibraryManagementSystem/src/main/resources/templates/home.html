@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Home Page</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
+	background-color: #f4f4f4;
+	color: #333;
+}
+
+h1 {
+	text-align: center;
+	color: #4CAF50; /* Green color */
+	margin-bottom: 20px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	background-color: #fff;
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: left;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+.rent-button {
+	padding: 8px 12px;
+	border: none;
+	color: white;
+	cursor: pointer;
+	border-radius: 5px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.rent-button.green {
+	background-color: #4CAF50; /* Green button */
+}
+
+.rent-button.red {
+	background-color: #f44336; /* Red button */
+	cursor: not-allowed;
+}
+
+.rent-button:disabled {
+	background-color: #ccc; /* Disabled button color */
+}
+
+.rent-button:hover {
+	opacity: 0.8;
+}
+
+.logout-button {
+	background-color: #333;
+	color: #fff;
+	border: none;
+	padding: 10px 20px;
+	cursor: pointer;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.logout-button:hover {
+	background-color: #555;
+}
+</style>
+</head>
+<body>
+	<h1>Library Management System</h1>
+
+	<h2>Books Taken by User</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Author</th>
+				<th>Return Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="record : ${takenBooks}">
+				<td th:text="${record.book.title}"></td>
+				<td th:text="${record.book.author}"></td>
+				<td th:text="${#dates.format(record.dueDate, 'yyyy-MM-dd')}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Available Books</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Author</th>
+				<th>Genre</th>
+				<th>Available Copies</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="book : ${availableBooks}">
+				<td th:text="${book.title}"></td>
+				<td th:text="${book.author}"></td>
+				<td th:text="${book.genre}"></td>
+				<td th:text="${book.availableCopies}"></td>
+				<td>
+					<form th:action="@{/rent/{bookId}/(bookId=${book.id})}"
+						method="post">
+						<button th:if="${book.availableCopies > 0}"
+							th:classappend="'rent-button green'" type="submit">Rent
+						</button>
+						<button th:if="${book.availableCopies == 0}"
+							class="rent-button red" disabled>Not Available</button>
+					</form>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<form th:action="@{/logout}" method="post">
+		<button class="logout-button" type="submit">Logout</button>
+	</form>
+</body>
+</html>
